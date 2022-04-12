@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 final passwordProvider = StateProvider<bool>((ref) {
   return true;
 });
+final autofocusProvider = StateProvider<bool>(
+  (ref) => true,
+);
 
-class CustomTextFormField extends ConsumerWidget {
+class CustomTextFormField extends HookConsumerWidget {
   const CustomTextFormField({
     Key? key,
     required this.password,
@@ -29,30 +32,25 @@ class CustomTextFormField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    // final autofocus = useState(true);
     return SizedBox(
       width: width ?? 300,
       child: TextFormField(
         validator: validator,
+        autofocus: ref.watch(autofocusProvider),
+        onTap: () {
+          ref.read(autofocusProvider.state).state = true;
+        },
+        controller: controller,
         obscureText: password ? ref.watch(passwordProvider) : false,
         autovalidateMode: AutovalidateMode.always,
         decoration: InputDecoration(
           fillColor: (enabled) ? Colors.white : Colors.grey.shade300,
           enabled: enabled,
           filled: true,
-          // labelText: label,
-
-          label: FittedBox(
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: enabled ? Colors.white : Colors.grey.shade300,
-              ),
-              child: Text(label),
-            ),
-          ),
+          labelText: label,
           suffixIcon: password
-              ? InkWell(
+              ? GestureDetector(
                   onTap: () {
                     ref.read(passwordProvider.state).state =
                         !ref.read(passwordProvider);
@@ -65,18 +63,7 @@ class CustomTextFormField extends ConsumerWidget {
                 )
               : null,
           prefixIcon: icon,
-
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: (border == null)
-                ? BorderSide.none
-                : BorderSide(
-                    color: Colors.blue.shade900,
-                    width: 2,
-                  ),
-          ),
         ),
-        controller: controller,
       ),
     );
   }

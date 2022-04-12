@@ -29,7 +29,6 @@ class ProfileScreen extends ConsumerWidget {
                 .read(customerStateNotifier(ref.read(authProvider).user!)
                     .notifier)
                 .removeCustomers(customers[index]),
-            edit: () {},
           ),
         ),
       );

@@ -48,60 +48,56 @@ class AddCustomerScreen extends HookConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Column(
             children: [
-              Form(
-                key: part1,
-                child: Column(
-                  children: [
-                    ConsumerCustomText(
-                      controller: nameController,
-                      label: 'Name',
-                      status: 0,
-                      validator: Validator(minLenth: 5).checkEmpty,
-                    ),
-                    ConsumerCustomText(
-                      controller: noHpController,
-                      label: 'Phone Number',
-                      status: 0,
-                      validator: Validator().checkNumberPhone,
-                    ),
-                    ConsumerCustomText(
-                      controller: dobController,
-                      label: 'Date of Birth',
-                      status: 0,
-                      validator: Validator().checkEmpty,
-                    ),
-                  ],
-                ),
+              Column(
+                children: [
+                  ConsumerCustomText(
+                    controller: nameController,
+                    label: 'Name',
+                    status: 0,
+                    validator: Validator(minLenth: 5).checkEmpty,
+                  ),
+                  ConsumerCustomText(
+                    controller: noHpController,
+                    label: 'Phone Number',
+                    status: 0,
+                    validator: Validator().checkNumberPhone,
+                  ),
+                  ConsumerCustomText(
+                    controller: dobController,
+                    label: 'Date of Birth',
+                    status: 0,
+                    validator: Validator().checkEmpty,
+                  ),
+                ],
               ),
-              Form(
-                key: part2,
-                child: Column(
-                  children: [
-                    ConsumerCustomText(
-                      controller: merkController,
-                      label: 'Vehicle Brand',
-                      status: 1,
-                      validator: Validator().checkEmpty,
-                    ),
-                  ],
-                ),
+              Column(
+                children: [
+                  ConsumerCustomText(
+                    controller: merkController,
+                    label: 'Vehicle Brand',
+                    status: 1,
+                    validator: Validator().checkEmpty,
+                  ),
+                ],
               ),
               ConsumerCustomText(
                 controller: modelController,
                 label: 'Vehicle Model',
                 status: 1,
-                validator: (value) {
-                  return null;
-                },
+                validator: Validator().checkEmpty,
               ),
               ImagePicker(part3: part3),
               ElevatedButton(
                   onPressed: () {
                     if (ref.read(addStateProvider) == 0 &&
-                        part1.currentState!.validate()) {
+                        Validator().checkEmpty(nameController.text) == null &&
+                        Validator().checkNumberPhone(noHpController.text) ==
+                            null &&
+                        Validator().checkEmpty(dobController.text) == null) {
                       ref.read(addStateProvider.state).state++;
                     } else if (ref.read(addStateProvider) == 1 &&
-                        part2.currentState!.validate()) {
+                        Validator().checkEmpty(merkController.text) == null &&
+                        Validator().checkEmpty(merkController.text) == null) {
                       ref.read(addStateProvider.state).state++;
                       ref.read(imagePathProvider.state).state = "";
                       ref.read(imageProvider.state).state = null;

@@ -8,11 +8,9 @@ class CustomCard extends StatelessWidget {
   final CustomersRetrieve customer;
 
   final VoidCallback? delete;
-  final VoidCallback? edit;
   const CustomCard(
       {Key? key,
       required this.maxItem,
-      this.edit,
       this.delete,
       required this.customer,
       required this.index})
@@ -92,11 +90,6 @@ class CustomCard extends StatelessWidget {
                                     icon: const Icon(Icons.delete),
                                     label: const Text("Delete"),
                                   ),
-                                  TextButton.icon(
-                                    onPressed: edit,
-                                    icon: const Icon(Icons.edit),
-                                    label: const Text("Edit"),
-                                  )
                                 ],
                               ),
                             ),
