@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:riverpod_advance/model/customers_model.dart';
 import '../function/size_extention.dart';
@@ -147,9 +149,13 @@ class CustomCard extends StatelessWidget {
                 width: context.getWidth() * 0.3 - 10,
                 padding: const EdgeInsets.only(left: 5),
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                       image: DecorationImage(
-                    image: AssetImage("assets/imfi.jpeg"),
+                    image: FileImage(
+                      File(
+                        customer.picture,
+                      ),
+                    ),
                     fit: BoxFit.fill,
                   )),
                 ),

@@ -23,8 +23,7 @@ class AddCustomerScreen extends HookConsumerWidget {
     final dobController = useTextEditingController();
     final merkController = useTextEditingController();
     final modelController = useTextEditingController();
-    final part1 = GlobalKey<FormState>();
-    final part2 = GlobalKey<FormState>();
+    final imageController = useTextEditingController();
     final part3 = GlobalKey<FormState>();
     return Scaffold(
       appBar: AppBar(
@@ -86,7 +85,16 @@ class AddCustomerScreen extends HookConsumerWidget {
                 status: 1,
                 validator: Validator().checkEmpty,
               ),
-              ImagePicker(part3: part3),
+              Consumer(
+                builder: (context, refe, child) {
+                  if (refe.watch(addStateProvider) == 2) {
+                    return ImagePicker(
+                        keyForm: part3, controller: imageController);
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
               ElevatedButton(
                   onPressed: () {
                     if (ref.read(addStateProvider) == 0 &&
@@ -99,17 +107,15 @@ class AddCustomerScreen extends HookConsumerWidget {
                         Validator().checkEmpty(merkController.text) == null &&
                         Validator().checkEmpty(merkController.text) == null) {
                       ref.read(addStateProvider.state).state++;
-                      ref.read(imagePathProvider.state).state = "";
-                      ref.read(imageProvider.state).state = null;
                     } else if (ref.read(addStateProvider) == 2 &&
-                        ref.read(imagePathProvider).isNotEmpty) {
+                        imageController.text.isNotEmpty) {
                       final customer = CustomerSubmit(
                           customerName: nameController.text,
                           customersNum: noHpController.text,
                           dob: dobController.text,
                           model: modelController.text,
                           merk: merkController.text,
-                          picture: ref.read(imagePathProvider),
+                          picture: imageController.text,
                           createdBy: ref.read(authProvider).user!.id!);
                       ref
                           .read(customerStateNotifier(

@@ -15,7 +15,7 @@ class CustomersNotifier extends StateNotifier<CustomersState> {
   void _loadCustomers() async {
     state = CustomersLoading(state.user);
     final retrieve = await DbHelper.getCustomers();
-    
+
     state = CustomersLoading(state.user);
     state = CustomersLoaded(
       state.user,
@@ -28,7 +28,7 @@ class CustomersNotifier extends StateNotifier<CustomersState> {
     _loadCustomers();
   }
 
-  void removeCustomers(CustomersRetrieve customer) {
+  void removeCustomers(CustomersRetrieve customer) async {
     if (state is CustomersLoaded) {
       final stateCurr = state as CustomersLoaded;
       final data = stateCurr.customers;
@@ -36,6 +36,7 @@ class CustomersNotifier extends StateNotifier<CustomersState> {
       data.removeWhere(
         (element) => element.customerId == customer.customerId,
       );
+      await DbHelper.delete(customer);
       state = CustomersDelete(state.user);
       state = CustomersLoaded(state.user, customers: data);
     }

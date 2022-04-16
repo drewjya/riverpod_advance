@@ -1,103 +1,93 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_advance/function/image_picker.dart';
-import 'package:riverpod_advance/screen/add_screen.dart';
 
-final imagePathProvider = StateProvider<String>((ref) {
-  return "";
-});
-
-final imageProvider = StateProvider<File?>(
-  (ref) => null,
-);
-
-class ImagePicker extends ConsumerWidget {
+class ImagePicker extends StatefulWidget {
   const ImagePicker({
     Key? key,
-    required this.part3,
+    required this.keyForm,
+    required this.controller,
   }) : super(key: key);
 
-  final GlobalKey<FormState> part3;
+  final TextEditingController controller;
+  final GlobalKey<FormState> keyForm;
 
   @override
-  Widget build(BuildContext context, ref) {
-    return Consumer(
-      builder: (context, refe, child) {
-        return (refe.watch(addStateProvider) == 2)
-            ? Container(
-                margin: const EdgeInsets.all(20),
-                child: Column(children: [
-                  const Text(
-                    "Data KTP",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  FormField<File>(
-                    key: part3,
-                    validator: (value) {
-                      if (ref.watch(imagePathProvider).isEmpty) {
-                        return "This field must be entered";
-                      }
-                      return null;
-                    },
-                    autovalidateMode: AutovalidateMode.always,
-                    builder: (FormFieldState<File> field) {
-                      return Center(
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.all(10),
-                              errorText: field.errorText,
-                              errorStyle: const TextStyle(fontSize: 15)),
-                          child: SizedBox(
-                            height: 200,
+  State<ImagePicker> createState() => _ImagePickerState();
+}
+
+class _ImagePickerState extends State<ImagePicker> {
+  @override
+  Widget build(BuildContext context) {
+    // useState(controller.text);
+    return SizedBox(
+      height: 155,
+      width: 400,
+      child: FormField(
+        key: widget.keyForm,
+        validator: (File? value) {
+          if (widget.controller.text == "") {
+            return "Please upload picture";
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.always,
+        builder: (FormFieldState<File> field) {
+          return SizedBox(
+            height: 155,
+            width: 400,
+            child: InputDecorator(
+              decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(0))
+                  .applyDefaults(
+                    Theme.of(field.context).inputDecorationTheme,
+                  )
+                  .copyWith(errorText: field.errorText),
+              child: SizedBox(
+                height: 155,
+                width: 400,
+                child: TextButton(
+                  onPressed: () async {
+                    final data = await imagePicker();
+                    if (data == null) {
+                      widget.controller.text = "";
+                    } else {
+                      widget.controller.text = data.path;
+                    }
+                    setState(() {});
+                  },
+                  child: (widget.controller.text.isEmpty)
+                      ? Container(
+                          width: 200,
+                          height: 200,
+                          color: Colors.grey,
+                          child: const FittedBox(
+                            child: Icon(
+                              Icons.camera_alt_outlined,
+                              color: Colors.black,
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Container(
                             width: 200,
-                            child: Consumer(builder: (context, refer, _) {
-                              return TextButton(
-                                child: (refer.watch(imageProvider) == null)
-                                    ? const SizedBox(
-                                        height: 100,
-                                        width: 100,
-                                        child: FittedBox(
-                                          child: Icon(Icons.camera_alt_rounded),
-                                        ),
-                                      )
-                                    : Container(
-                                        height: 200,
-                                        width: 200,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: FileImage(
-                                                refer.watch(imageProvider)!),
-                                            fit: BoxFit.fill,
-                                          ),
-                                        ),
-                                      ),
-                                onPressed: () async {
-                                  final result = await imagePicker();
-                                  if (result != null) {
-                                    refer.read(imageProvider.state).state =
-                                        result;
-                                    refer.read(imagePathProvider.state).state =
-                                        result.path;
-                                  } else {
-                                    refer.read(imageProvider.state).state =
-                                        result;
-                                    refer.read(imagePathProvider.state).state =
-                                        "";
-                                  }
-                                },
-                              );
-                            }),
+                            height: 200,
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: FileImage(
+                                        File(widget.controller.text)))),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ]),
-              )
-            : const SizedBox();
-      },
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
